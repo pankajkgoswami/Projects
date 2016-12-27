@@ -6,7 +6,7 @@ import csv
 
 urllist=[]
 d1 = datetime.date(2001, 1, 1)
-site_name='http://timesofindia.indiatimes.com/'
+site_name='http://timesofindia.indiatimes.com'
 starttime=36892
 #today =datetime.date(2001, 1, 20)
 today = datetime.date.today()
