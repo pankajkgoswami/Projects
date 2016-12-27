@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import sys,os
 import re
-
+ 
 def URLCollector(url,file_name):
     toi_url='http://timesofindia.indiatimes.com/2016/1/3/archivelist/year-2016,month-1,starttime-42372.cms'
     r=requests.get(toi_url)

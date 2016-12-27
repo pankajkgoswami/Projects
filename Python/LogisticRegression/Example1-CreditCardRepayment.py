@@ -7,5 +7,5 @@ y = np.array([1,1,0,0])
 
 classifier = LogisticRegression()
 classifier.fit(x,y)
-
+ 
 print(classifier.predict([5500,50000,25]))

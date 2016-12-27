@@ -11,7 +11,7 @@ starttime=36892
 #today =datetime.date(2001, 1, 20)
 today = datetime.date.today()
 dateval=[]
-
+ 
 # To Get the values of Year Month and Day from datetime
 
 # The while loop will generate the links for each day since 2001 to current day and append it

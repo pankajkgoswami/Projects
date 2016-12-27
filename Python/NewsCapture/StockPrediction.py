@@ -14,7 +14,7 @@ def getData(filename):
             dates.append(int(row[0].split('-')[0]))
             prices.append(float(row[1]))
     return
-
+ 
 def predictPrice(dates,prices,x):
     dates=np.reshape(dates, (len(dates),1))
     

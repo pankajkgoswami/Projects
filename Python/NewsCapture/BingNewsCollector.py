@@ -12,7 +12,7 @@ def bing_search(query):
     r = requests.get(url, params=payload, headers=headers)
     # get JSON response
     return r.json()
-
+ 
 j = bing_search('TCS')
 print(j.get('webPages', {}).get('value', {}))
 

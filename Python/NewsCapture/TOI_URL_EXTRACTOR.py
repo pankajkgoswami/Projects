@@ -17,7 +17,7 @@ def URLCollector(url,out_file_name,error_fname):
     # URL from where the data needs to be scraped
     r=requests.get(url)
     soup = BeautifulSoup(r.content,'lxml')
-
+ 
     # Intermediate file to save the HTML data
     int_fname = "URL_DATA_INTERMEDIATE.out"
 
