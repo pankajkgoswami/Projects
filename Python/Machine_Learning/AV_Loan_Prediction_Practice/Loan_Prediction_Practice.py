@@ -5,7 +5,10 @@ import matplotlib.pyplot as plt
 from boto.mws.connection import dependent
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn import preprocessing,cross_validation
+from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import SVC, LinearSVC
 
 # get train & test csv files as a DataFrame
 df_train = pd.read_csv('train_u6lujuX_CVtuZ9i.csv')
@@ -16,8 +19,8 @@ df_test = pd.read_csv('test_Y3wMUE5_7gLdaTN.csv')
 df_train.drop(['Loan_ID'],axis=1,inplace=True)
 
 # The Gender column has some missing values so we'll update the missing records with unknown
-df_train["Gender"] = df_train["Gender"].fillna("Unknown")
-df_test["Gender"] = df_train["Gender"].fillna("Unknown")
+df_train["Gender"] = df_train["Gender"].fillna("Male")
+df_test["Gender"] = df_train["Gender"].fillna("Male")
 
 def get_gender(gender):
     gen=0
@@ -34,8 +37,8 @@ df_train['Gender'] = df_train['Gender'].apply(get_gender)
 df_test['Gender'] = df_test['Gender'].apply(get_gender)
 
 # Three records has missing married column so updating them with Yes which is the mode
-df_train["Married"] = df_train["Married"].fillna(method='ffill')
-df_test["Married"] = df_test["Married"].fillna(method='ffill')
+df_train["Married"] = df_train["Married"].fillna('Yes')
+df_test["Married"] = df_test["Married"].fillna('Yes')
 
 def get_married(status):
     return 0 if status =='Yes'  else 1
@@ -47,8 +50,11 @@ df_test['Married'] = df_test['Married'].apply(get_married)
 def get_dependents(dependents):
     return '0' if dependents =='0'  else '1'
 
-df_train['Dependents'] = df_train['Dependents'].apply(get_dependents)
-df_test['Dependents'] = df_test['Dependents'].apply(get_dependents)
+df_train['Dependents'] = df_train['Dependents'].replace('3+',3)
+df_test['Dependents'] = df_train['Dependents'].replace('3+',3)
+df_train["Dependents"] = df_train["Dependents"].fillna(0)
+df_test["Dependents"] = df_test["Dependents"].fillna(0)
+#df_test['Dependents'] = df_test['Dependents'].apply(get_dependents)
 
 def get_loan_status(status):
     return 0 if status =='N'  else 1
@@ -73,8 +79,8 @@ df_test['Self_Employed'] = df_test['Self_Employed'].apply(get_selfemp)
 
 
 # Updating the missing Loan amount records with Median values
-df_train["LoanAmount"].fillna(df_train["LoanAmount"].median(), inplace=True)
-df_test["LoanAmount"].fillna(df_test["LoanAmount"].median(), inplace=True)
+df_train["LoanAmount"].fillna(df_train["LoanAmount"].mean(), inplace=True)
+df_test["LoanAmount"].fillna(df_test["LoanAmount"].mean(), inplace=True)
 
 #  Update the Loan amount term with Mode
 df_train["Loan_Amount_Term"].fillna(df_train["Loan_Amount_Term"].median(), inplace=True)
@@ -86,7 +92,7 @@ df_train["Credit_History"] = df_train["Credit_History"].fillna(1)
 df_test["Credit_History"] = df_test["Credit_History"].fillna(1)
 
 def get_location(location):
-    loc=0
+    loc=2
     if location =='Urban':
         loc=0
     elif location =='Rural':
@@ -120,28 +126,35 @@ df_train.to_csv('before.csv')
 
 # df_train.to_csv('After.csv')
 
-X_t = df_train.drop("Loan_Status",axis=1)
-y_t = df_train["Loan_Status"]
+X_train = df_train.drop("Loan_Status",axis=1)
+Y_train = df_train["Loan_Status"]
 X_test  = df_test.drop("Loan_ID",axis=1)
 # 
 # print(df_test)
 
-# random_forest = RandomForestClassifier(n_estimators=5)
-#  
+# random_forest = RandomForestClassifier(n_estimators=100)
 # random_forest.fit(X_train, Y_train)
-#  
 # Y_pred = random_forest.predict(X_test)
-#  
 # random_forest.score(X_train, Y_train)
 
-X_Train,X_Test,y_Train,y_Test= cross_validation.train_test_split(X_t,y_t,test_size=0.2)
+# logreg = LogisticRegression()
+# logreg.fit(X_train, Y_train)
+# Y_pred = logreg.predict(X_test)
+# logreg.score(X_train, Y_train)
 
-random_forest = RandomForestClassifier(n_estimators=5)
+svc = SVC()
+svc.fit(X_train, Y_train)
+Y_pred = svc.predict(X_test)
+svc.score(X_train, Y_train)
 
-random_forest.fit(X_Train, y_Train)
-
-accuracy = random_forest.score(X_Train, y_Train)
-Y_pred = random_forest.predict(X_test)
+# X_Train,X_Test,y_Train,y_Test= cross_validation.train_test_split(X_t,y_t,test_size=0.2)
+# 
+# random_forest = RandomForestClassifier(n_estimators=5)
+# 
+# random_forest.fit(X_Train, y_Train)
+# 
+# accuracy = random_forest.score(X_Train, y_Train)
+# Y_pred = random_forest.predict(X_test)
 
 
 submission = pd.DataFrame({
@@ -152,8 +165,10 @@ submission.to_csv('Submission.csv', index=False)
 
 
 df_n = pd.read_csv('Submission.csv')
-df_n["Loan_Status"].replace('0','N',inplace=True)
 
-df_n.head(5)
+df_n["Loan_Status"].replace('0','N',inplace=True)
+df_n["Loan_Status"].replace(1,'Y',inplace=True)
+
+df_n.to_csv('Submission_final.csv',index=False)
 
 

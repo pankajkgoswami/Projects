@@ -8,12 +8,11 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn import preprocessing,cross_validation
 
 # get train & test csv files as a DataFrame
-df_train = pd.read_csv('train_u6lujuX_CVtuZ9i.csv')
-df_test = pd.read_csv('test_Y3wMUE5_7gLdaTN.csv')
 
-# Dropping Loan Id as it's not useful in analysis and prediction
-df_train.drop(['Loan_ID'],axis=1,inplace=True)
+df_train = pd.read_csv('Train_UWu5bXk.csv')
+df_test = pd.read_csv('Test_u94Q5KV.csv')
 
-print(df_train.groupby(['Gender']).size())
+
+#print(df_train.groupby(['Gender']).size())
 
 df_train.info()
